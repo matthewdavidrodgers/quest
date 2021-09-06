@@ -5,6 +5,7 @@ A curl-like utility for making HTTP requests at the command line
 # installation
 
 Clone the repo `git clone https://github.com/matthewdavidrodgers/quest` and navigate to the installed directory
+
 Install `go install ./cmd/quest` (remember to add your go binary location to your path - alternatively, you can also use `go build ./cmd/quest` if you want control of the built binary)
 
 # usage
