@@ -16,6 +16,8 @@ with options as follows:
 - `-f` format the output as json (defaults to true)
 - `-e` open vim with a temporary file containing the request details before sending, allowing you to fine tune your request. Once you save and close vim, the updated details will be used (defaults to false)
 - `-m` specify an HTTP method (allowed: GET, PUT, POST, PATCH, DELETE, defaults to GET)
+- `-r` redo your previous request. Most useful combined with `-e`, allowing you to re-try and touch up the last request you made
+- `-v` enable verbose logging. Displays all headers and the body for both the request and response
 
 quest also supports saving and reusing cookies using the following command:
 
