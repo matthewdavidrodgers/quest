@@ -11,10 +11,10 @@ import (
 )
 
 type EncodeableRequestDetails struct {
-        Method  string            `json:"method"`
-        Url     string            `json:"url"`
-        Headers map[string]string `json:"headers"`
-        Body    *json.RawMessage  `json:"body"`
+	Method  string            `json:"method"`
+	Url     string            `json:"url"`
+	Headers map[string]string `json:"headers"`
+	Body    *json.RawMessage  `json:"body"`
 }
 
 func OpenEditorAndParseFromSavedContent(req *http.RequestDetails) error {
@@ -24,22 +24,22 @@ func OpenEditorAndParseFromSavedContent(req *http.RequestDetails) error {
 		return err
 	}
 
-        var rawBody json.RawMessage
-        if req.Body == "" {
-                rawBody = []byte("{}")
-        } else {
-                rawBody = []byte(req.Body)
-        }
-        encodeableData := EncodeableRequestDetails{
-                Method: req.Method,
-                Url: req.Url,
-                Headers: req.Headers,
-                Body: &rawBody,
-        }
-        encodedReq, err := json.MarshalIndent(encodeableData, "", "  ")
-        if err != nil {
-                return err
-        }
+	var rawBody json.RawMessage
+	if req.Body == "" {
+		rawBody = []byte("{}")
+	} else {
+		rawBody = []byte(req.Body)
+	}
+	encodeableData := EncodeableRequestDetails{
+		Method:  req.Method,
+		Url:     req.Url,
+		Headers: req.Headers,
+		Body:    &rawBody,
+	}
+	encodedReq, err := json.MarshalIndent(encodeableData, "", "  ")
+	if err != nil {
+		return err
+	}
 
 	_, err = requestFile.Write(encodedReq)
 	if err != nil {

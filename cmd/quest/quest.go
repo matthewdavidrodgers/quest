@@ -44,20 +44,20 @@ func init() {
 		methodDefault = "GET"
 		methodUsage   = "HTTP request method. GET, PUT, POST, PATCH, DELETE allowed"
 
-                verboseCmd     = "v"
-                verboseDefault = false
-                verboseUsage   = "Output verbose information about the request and response"
+		verboseCmd     = "v"
+		verboseDefault = false
+		verboseUsage   = "Output verbose information about the request and response"
 
-                redoCmd     = "r"
-                redoDefault = false
-                redoUsage   = "Use the same details as the previous request"
+		redoCmd     = "r"
+		redoDefault = false
+		redoUsage   = "Use the same details as the previous request"
 	)
 
 	flag.BoolVar(&openEditor, openEditorCmd, openEditorDefault, openEditorUsage)
 	flag.BoolVar(&formatOutput, formatOutputCmd, formatOutputDefault, formatOutputUsage)
 	flag.StringVar(&method, methodCmd, methodDefault, methodUsage)
-        flag.BoolVar(&verbose, verboseCmd, verboseDefault, verboseUsage)
-        flag.BoolVar(&redo, redoCmd, redoDefault, redoUsage)
+	flag.BoolVar(&verbose, verboseCmd, verboseDefault, verboseUsage)
+	flag.BoolVar(&redo, redoCmd, redoDefault, redoUsage)
 }
 
 func main() {
@@ -97,29 +97,29 @@ func main() {
 	req.Method = method
 	req.Url = url
 
-        if redo {
-                lastReqEncoded, err := configFile.GetValue("LAST_REQUEST")
-                if err != nil {
-                        fmt.Println(err)
-                        os.Exit(1)
-                }
-                if lastReqEncoded == "" {
-                        fmt.Println("No last request found, cannot use -r")
-                        os.Exit(1)
-                }
-                lastReq := editor.EncodeableRequestDetails{}
-                err = json.Unmarshal([]byte(lastReqEncoded), &lastReq)
-                if err != nil {
-                        fmt.Println(err)
-                        os.Exit(1)
-                }
-                req.Method = lastReq.Method
-                req.Url = lastReq.Url
-                req.Headers = lastReq.Headers
-                if lastReq.Body != nil {
-                        req.Body = string(*lastReq.Body)
-                }
-        }
+	if redo {
+		lastReqEncoded, err := configFile.GetValue("LAST_REQUEST")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		if lastReqEncoded == "" {
+			fmt.Println("No last request found, cannot use -r")
+			os.Exit(1)
+		}
+		lastReq := editor.EncodeableRequestDetails{}
+		err = json.Unmarshal([]byte(lastReqEncoded), &lastReq)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		req.Method = lastReq.Method
+		req.Url = lastReq.Url
+		req.Headers = lastReq.Headers
+		if lastReq.Body != nil {
+			req.Body = string(*lastReq.Body)
+		}
+	}
 
 	if openEditor {
 		err = editor.OpenEditorAndParseFromSavedContent(&req)
@@ -137,45 +137,45 @@ func main() {
 		req.Headers["Cookie"] = cookie
 	}
 
-        var rawBody json.RawMessage
-        if req.Body != "" {
-                rawBody = []byte(req.Body)
-        }
-        encoded, err := json.Marshal(editor.EncodeableRequestDetails{
-                Method: req.Method,
-                Url: req.Url,
-                Headers: req.Headers,
-                Body: &rawBody,
-        })
-        if err != nil {
-                fmt.Println(err)
-                os.Exit(1)
-        }
-        configFile.RemoveValue("LAST_REQUEST")
-        _, err = configFile.AppendValue("LAST_REQUEST", string(encoded))
-        if err != nil {
-                fmt.Println(err)
-                os.Exit(1)
-        }
+	var rawBody json.RawMessage
+	if req.Body != "" {
+		rawBody = []byte(req.Body)
+	}
+	encoded, err := json.Marshal(editor.EncodeableRequestDetails{
+		Method:  req.Method,
+		Url:     req.Url,
+		Headers: req.Headers,
+		Body:    &rawBody,
+	})
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	configFile.RemoveValue("LAST_REQUEST")
+	_, err = configFile.AppendValue("LAST_REQUEST", string(encoded))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-        output := ""
-        if verbose {
-                reqDetails := http.PrintRequest(req)
-                output = output + reqDetails
-        }
+	output := ""
+	if verbose {
+		reqDetails := http.PrintRequest(req)
+		output = output + reqDetails
+	}
 
 	resp, err := http.MakeRequest(req)
-        if err != nil {
-                fmt.Println(err)
-                os.Exit(1)
-        }
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-        content, err := http.ReadResponse(resp, verbose, formatOutput)
-        if err != nil {
-                fmt.Println(err)
-                os.Exit(1)
-        }
-        output = output + content
+	content, err := http.ReadResponse(resp, verbose, formatOutput)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	output = output + content
 
-        fmt.Println(output)
+	fmt.Println(output)
 }
